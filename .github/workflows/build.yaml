@@ -18,7 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Log in to the Container registry
-        if: steps.release.outputs.release_created
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
