@@ -40,9 +40,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v6
+        working-directory: tester
         with:
           push: true
           tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}-tester:latest
-          dockerfile: ./tester/Dockerfile
 
       
