@@ -13,10 +13,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-const (
-	WORK_DURATION = 100 * time.Millisecond
-)
-
 func main() {
 
 	threadRequestsHandledCounter := prometheus.NewCounterVec(
@@ -45,9 +41,17 @@ func main() {
 	})
 
 	http.HandleFunc("/work", func(w http.ResponseWriter, r *http.Request) {
-		// Do some busy work for 100ms
+
+		workDuration, err := time.ParseDuration(r.URL.Query().Get("duration"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Invalid duration"))
+			return
+		}
+
+		// Do some busy work
 		// Sleep must not be used as it wont keep the CPU busy
-		end := time.Now().Add(WORK_DURATION)
+		end := time.Now().Add(workDuration)
 		for time.Now().Before(end) {
 
 		}

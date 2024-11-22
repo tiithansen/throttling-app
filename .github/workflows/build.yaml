@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:latest
+          tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:${{ github.sha }}
   build-tester:
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}-tester:latest
+          tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}-tester:${{ github.sha }}
           file: ./tester/Dockerfile
 
       

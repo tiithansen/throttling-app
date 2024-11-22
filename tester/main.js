@@ -11,9 +11,10 @@ const responseDurationSeconds = new promClient.Histogram({
     buckets: [.005, .01, .025, .05, .075, .1, .125, .15, .175, .2, .25, .3, .4, .5, 1, 2.5, 5, 10]
 });
 
-function call() {
+function call(workDuration) {
     const end = responseDurationSeconds.startTimer()
-    return fetch(TEST_TARGET, {
+    console.log(`Calling ${TEST_TARGET}`);
+    return fetch(`${TEST_TARGET}?${workDuration}`, {
         method: "GET",
     })
     .then(response => response.status)
@@ -21,6 +22,7 @@ function call() {
         end({status: status});
     })
     .catch(error => console.log(error))
+    .finally(() => console.log("Call completed"));
 }
 
 async function runInternal(duration) {
@@ -32,11 +34,11 @@ async function runInternal(duration) {
     return true;
 }
 
-async function run(parallel, duration) {
+async function run(parallel, duration, workDuration) {
 
     const all = [];
     for (let i = 0; i < parallel; i++) {
-        all.push(runInternal(duration));
+        all.push(runInternal(duration, workDuration));
     }
 
     await Promise.all(all);
@@ -45,10 +47,13 @@ async function run(parallel, duration) {
 const app = express();
 
 app.get("/run-test", (req, res) => {
-    console.info(`Running test with parallel: ${req.query.parallel}, duration: ${req.query.duration}`);
+
     const parallel = parseInt(req.query.parallel);
     const duration = parseInt(req.query.duration);
-    run(parallel, duration * MINUTES_TO_MILLISECONDS).then(() => {
+    const workDuration = parseInt(req.query.work_duration);
+
+    console.info(`Running test with parallel: ${parallel}, duration: ${duration}, work duration ${workDuration}`);
+    run(parallel, duration * MINUTES_TO_MILLISECONDS, workDuration).then(() => {
         console.info(`Test completed`);
     });
     res.send("OK");
