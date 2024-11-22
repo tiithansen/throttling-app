@@ -28,5 +28,21 @@ jobs:
         with:
           push: true
           tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:latest
+  build-tester:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}-tester:latest
+          dockerfile: ./tester/Dockerfile
 
       
