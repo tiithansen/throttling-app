@@ -1,7 +1,7 @@
 FROM node:lts-alpine
 
 WORKDIR /app
-COPY . .
+COPY ./tester .
 RUN npm install
 
 CMD ["node", "main.js"]
