@@ -13,7 +13,7 @@ const responseDurationSeconds = new promClient.Histogram({
 
 function call(workDuration) {
     const end = responseDurationSeconds.startTimer()
-    return fetch(`${TEST_TARGET}?${workDuration}`, {
+    return fetch(`${TEST_TARGET}?duration=${workDuration}`, {
         method: "GET",
     })
     .then(response => response.status)
