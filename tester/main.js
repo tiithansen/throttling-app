@@ -13,7 +13,6 @@ const responseDurationSeconds = new promClient.Histogram({
 
 function call(workDuration) {
     const end = responseDurationSeconds.startTimer()
-    console.log(`Calling ${TEST_TARGET}`);
     return fetch(`${TEST_TARGET}?${workDuration}`, {
         method: "GET",
     })
@@ -22,7 +21,6 @@ function call(workDuration) {
         end({status: status});
     })
     .catch(error => console.log(error))
-    .finally(() => console.log("Call completed"));
 }
 
 async function runInternal(duration) {
