@@ -50,7 +50,7 @@ app.get("/run-test", (req, res) => {
 
     const parallel = parseInt(req.query.parallel);
     const duration = parseInt(req.query.duration);
-    const workDuration = parseInt(req.query.work_duration);
+    const workDuration = req.query.work_duration;
 
     console.info(`Running test with parallel: ${parallel}, duration: ${duration}, work duration ${workDuration}`);
     run(parallel, duration * MINUTES_TO_MILLISECONDS, workDuration).then(() => {
