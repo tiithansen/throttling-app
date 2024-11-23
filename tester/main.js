@@ -13,6 +13,7 @@ const responseDurationSeconds = new promClient.Histogram({
 
 function call(workDuration) {
     const end = responseDurationSeconds.startTimer()
+    console.info(`Calling ${TEST_TARGET} with duration ${workDuration} url: ${TEST_TARGET}?duration=${workDuration}`);
     return fetch(`${TEST_TARGET}?duration=${workDuration}`, {
         method: "GET",
     })
@@ -23,10 +24,10 @@ function call(workDuration) {
     .catch(error => console.log(error))
 }
 
-async function runInternal(duration) {
+async function runInternal(duration, workDuration) {
     const start = Date.now();
     while (Date.now() - start < duration) {
-        await call();
+        await call(workDuration);
     }
 
     return true;
@@ -50,7 +51,6 @@ app.get("/run-test", (req, res) => {
     const duration = parseInt(req.query.duration);
     const workDuration = req.query.work_duration;
 
-    console.info(`Running test with parallel: ${parallel}, duration: ${duration}, work duration ${workDuration}`);
     run(parallel, duration * MINUTES_TO_MILLISECONDS, workDuration).then(() => {
         console.info(`Test completed`);
     });
